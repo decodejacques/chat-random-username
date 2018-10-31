@@ -10,16 +10,26 @@ class App extends Component {
       messages: [],
       inputValue: ''
     }
+    this.refreshMessages = this.refreshMessages.bind(this)
+    this.handleSubmit = this.handleSubmit.bind(this)
+    this.handleChange = this.handleChange.bind(this)
   }
-  componentDidMount = () => {
+  componentDidMount() {
     setInterval(this.refreshMessages, 500);
   }
-  refreshMessages = () => {
+  refreshMessages () {
+    let cb = function(resBody) {
+      let msgs = JSON.parse(resBody)
+      this.setState({ messages: msgs })
+    }
+    cb = cb.bind(this)
     fetch('/messages')
-      .then(res => res.json())
-      .then(msgs => this.setState({ messages: msgs }))
+      .then(function (res) {
+        return res.text()
+      })
+      .then(cb)
   }
-  handleSubmit = event => {
+  handleSubmit(event) {
     event.preventDefault();
     let bod = JSON.stringify({
       username: this.state.username,
@@ -29,16 +39,18 @@ class App extends Component {
       method: 'POST',
       body: bod
     })
-     
+
   }
-  handleChange = event => {
+  handleChange(event) {
     this.setState({ inputValue: event.target.value })
   }
   render() {
     return (
       <div>
         <div className="topcontainer">
-          {this.state.messages.map(line => (<div> {line.username} : {line.contents} </div>))}
+          {this.state.messages.map(function (line) {
+            return (<div> {line.username} : {line.contents} </div>)
+          })}
         </div>
         <div className="botcontainer">
           <form onSubmit={this.handleSubmit}>

@@ -8,7 +8,7 @@ let serverState = {
     msgs: []
 }
 
-app.post('/sendMsg', (req, res) => {
+app.post('/sendMsg', function(req, res) {
     console.log(req.body.toString());
     let parsed = JSON.parse(req.body.toString());
     
@@ -17,7 +17,7 @@ app.post('/sendMsg', (req, res) => {
     
 })
 
-app.get('/messages', (req, res) => {
+app.get('/messages', function(req, res) {
     res.send(JSON.stringify(serverState.msgs))
 })
 
